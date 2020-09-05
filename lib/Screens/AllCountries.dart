@@ -9,20 +9,34 @@ class AllCountries extends StatefulWidget {
 
 class _AllCountriesState extends State<AllCountries> {
 //  void initS
-  Future<List> countries;
+  List countries = [];
+  List filteredCountries = [];
   bool isSearching = false;
+  bool countriesLoaded = false;
   void initState() {
     super.initState();
-    countries = getCountriesData();
+    getCountriesData().then((data) {
+      setState(() {
+        countries = filteredCountries = data;
+        countriesLoaded = true;
+      });
+    });
   }
 
   void _filterCounties(value) {
-    print(value);
+//    print(value);
+    setState(() {
+      filteredCountries = countries
+          .where((country) =>
+              country['name'].toLowerCase().contains(value.toLowerCase()))
+          .toList();
+    });
   }
 
-  Future<List> getCountriesData() async {
+  getCountriesData() async {
     var dio = Dio();
     var response = await dio.get('https://restcountries.eu/rest/v2/all');
+//    return response.data;
     return response.data;
   }
 
@@ -56,6 +70,7 @@ class _AllCountriesState extends State<AllCountries> {
             onPressed: () {
               setState(() {
                 isSearching = !isSearching;
+                filteredCountries = countries;
               });
             },
           )
@@ -63,12 +78,9 @@ class _AllCountriesState extends State<AllCountries> {
       ),
       body: Container(
         padding: EdgeInsets.all(10),
-        child: FutureBuilder<List>(
-          future: countries, // a previously-obtained Future<String> or null
-          builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-//            List<Widget> children;
-            if (snapshot.hasData) {
-              return ListView.builder(
+        child: filteredCountries.length > 0
+            ? ListView.builder(
+                itemCount: filteredCountries.length,
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
@@ -76,7 +88,7 @@ class _AllCountriesState extends State<AllCountries> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                Country(snapshot.data[index])),
+                                Country(filteredCountries[index])),
                       );
                     },
                     child: Card(
@@ -84,35 +96,17 @@ class _AllCountriesState extends State<AllCountries> {
                       child: Padding(
                         padding:
                             EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                        child: Text(snapshot.data[index]['name']),
+                        child: Text(filteredCountries[index]['name']),
                       ),
                     ),
                   );
                 },
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                      size: 60,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Text('Error: ${snapshot.error}'),
-                    )
-                  ],
-                ),
-              );
-            } else {
-              return LoadingSpinner();
-            }
-          },
-        ),
+              )
+            : (!countriesLoaded
+                ? LoadingSpinner()
+                : (countriesLoaded && filteredCountries.length < 1
+                    ? CountriesNotLoadedCard('No Countries Found')
+                    : CountriesNotLoadedCard('Error'))),
       ),
     );
   }
@@ -140,6 +134,21 @@ class LoadingSpinner extends StatelessWidget {
             child: Text('Please Wait...'),
           )
         ],
+      ),
+    );
+  }
+}
+
+class CountriesNotLoadedCard extends StatelessWidget {
+  final String title;
+  CountriesNotLoadedCard(this.title);
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 10,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+        child: Text(title),
       ),
     );
   }
