@@ -8,7 +8,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_country_house/main.dart';
 import 'package:flutter_country_house/Screens/AllCountries.dart';
 
 void main() {

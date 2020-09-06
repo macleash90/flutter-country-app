@@ -15,12 +15,21 @@ class _AllCountriesState extends State<AllCountries> {
   bool countriesLoaded = false;
   void initState() {
     super.initState();
+
+//    tr
+
     getCountriesData().then((data) {
       setState(() {
         countries = filteredCountries = data;
         countriesLoaded = true;
       });
+    }).catchError((e) {
+      print('Error: ' + e.toString());
+      setState(() {
+        countriesLoaded = true;
+      });
     });
+    ;
   }
 
   void _filterCounties(value) {
@@ -84,12 +93,14 @@ class _AllCountriesState extends State<AllCountries> {
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                Country(filteredCountries[index])),
-                      );
+//                      Navigator.push(
+//                        context,
+//                        MaterialPageRoute(
+//                            builder: (context) =>
+//                                Country(filteredCountries[index])),
+//                      );
+                      Navigator.pushNamed(context, Country.routeName,
+                          arguments: filteredCountries[index]);
                     },
                     child: Card(
                       elevation: 10,

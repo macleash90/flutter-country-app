@@ -10,6 +10,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="flutter_country_house"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCq_hTBQIk4Ud2ZwRo9eAMflo7e9SCCVa8"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -24,10 +26,12 @@
             <meta-data
                 android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
                 android:value="true" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
     </application>
 </manifest>

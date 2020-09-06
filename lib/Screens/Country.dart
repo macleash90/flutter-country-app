@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_country_house/Screens/CountryMap.dart';
 
 class Country extends StatelessWidget {
-  final Map country;
-  Country(this.country);
+//  final Map country;
+  static const routeName = '/country';
+//  Country(this.country);
 
 //  void getCountryData() {}
   @override
   Widget build(BuildContext context) {
+    final Map country = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         title: Text(country['name']),
@@ -68,16 +71,27 @@ class Country extends StatelessWidget {
                     the_color: Colors.pink),
               ),
             ),
-            FlipCard(
-              direction: FlipDirection.HORIZONTAL, // default
-              front: Container(
-                child: CountryCard('View On Map'),
-              ),
-              back: Container(
-                child: CountryDetailCard(
-                    title: 'View On Map', the_color: Colors.teal),
-              ),
-            ),
+//            FlipCard(
+//              direction: FlipDirection.HORIZONTAL, // default
+//              front: Container(
+//                child: CountryCard('View On Map'),
+//              ),
+//              back: Container(
+//                child: CountryDetailCard(
+//                    title: 'View On Map', the_color: Colors.teal),
+//              ),
+//            ),
+            GestureDetector(
+                onTap: () {
+//                  Navigator.push(
+//                    context,
+//                    MaterialPageRoute(
+//                        builder: (context) => CountryMap(country)),
+//                  );
+                  Navigator.pushNamed(context, CountryMap.routeName,
+                      arguments: country);
+                },
+                child: CountryCard('View On Map')),
           ],
         ),
       ),
